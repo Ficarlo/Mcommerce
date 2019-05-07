@@ -7,8 +7,6 @@ import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.google.gson.JsonObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +126,35 @@ public class ProductController {
     }
 
     @GetMapping(value = "AdminProduits")
+    public Map calculerMargeProduit() {
+        Map<String, Object> result = new LinkedHashMap<>();
+        List<Product> products = productDao.findAll();
+
+
+        for (Product product : products) {
+            float value = product.getPrix() - product.getPrixAchat();
+            result.put(product.toString(),Math.round(value * 100.0) / 100.0);
+        }
+
+        return result;
+
+    }
+
+    @GetMapping(value = "AdminProduits/{id}")
+    public Map calculerMargeProduitById(@PathVariable int id) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        Product product = productDao.findById(id);
+        
+        float value = product.getPrix() - product.getPrixAchat();
+        result.put(product.toString(),Math.round(value * 100.0) / 100.0);
+
+        return result;
+
+    }
+
+
+
+    /*@GetMapping(value = "AdminProduits")
     public List<Map> calculerMargeProduit() {
         List<Map> productToStr = new ArrayList<Map>();
         List<Product> products = productDao.findAll();
@@ -143,7 +170,7 @@ public class ProductController {
 
         return productToStr;
 
-    }
+    }*/
 
 
 
