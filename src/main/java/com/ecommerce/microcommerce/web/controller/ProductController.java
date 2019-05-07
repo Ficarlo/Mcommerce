@@ -61,7 +61,7 @@ public class ProductController {
 
         Product produit = productDao.findById(id);
 
-        if(produit==null) throw new ProduitIntrouvableException("Le produit avec l'id " + id + " est INTROUVABLE. Écran Bleu si je pouvais.");
+        if(produit==null) throw new ProduitIntrouvableException("Le produit avec l'id " + id + " est introuvable.");
 
         return produit;
     }
@@ -144,7 +144,9 @@ public class ProductController {
     public Map calculerMargeProduitById(@PathVariable int id) {
         Map<String, Object> result = new LinkedHashMap<>();
         Product product = productDao.findById(id);
-        
+
+        if(product==null) throw new ProduitIntrouvableException("Le produit avec l'id " + id + " est introuvable.");
+
         float value = product.getPrix() - product.getPrixAchat();
         result.put(product.toString(),Math.round(value * 100.0) / 100.0);
 
