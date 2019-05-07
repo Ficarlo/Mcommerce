@@ -7,6 +7,8 @@ import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.google.gson.JsonObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Api( description="API pour es opérations CRUD sur les produits.")
@@ -89,14 +95,6 @@ public class ProductController {
 
     }
 
-    @GetMapping(value = "test/produitsOrderAsc")
-    public List<Product> trierProduitsParOrdreAlphabetique() {
-
-        return productDao.findAllByOrderByNomAsc();
-
-    }
-
-
     @DeleteMapping (value = "/Produits/{id}")
     public void supprimerProduit(@PathVariable int id) {
 
@@ -120,6 +118,31 @@ public class ProductController {
     public List<Product>  testeDeRequetes(@PathVariable int prix) {
 
         return productDao.chercherUnProduitCher(400);
+    }
+
+    @GetMapping(value = "test/produitsOrderAsc")
+    public List<Product> trierProduitsParOrdreAlphabetique() {
+
+        return productDao.findAllByOrderByNomAsc();
+
+    }
+
+    @GetMapping(value = "AdminProduits")
+    public List<Map> calculerMargeProduit() {
+        List<Map> productToStr = new ArrayList<Map>();
+        List<Product> products = productDao.findAll();
+
+
+        for (Product product : products) {
+            DecimalFormat df = new DecimalFormat("#.##");
+            float value = product.getPrix() - product.getPrixAchat();
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put(product.toString(),df.format(value ));
+            productToStr.add(result);
+        }
+
+        return productToStr;
+
     }
 
 
